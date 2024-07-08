@@ -3,25 +3,42 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbo --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.6.0",
+    "@redux-devtools/extension": "^3.3.0",
     "@repo/ui": "*",
-    "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522",
-    "next": "15.0.0-rc.0"
+    "@repo/validation-schemas": "*",
+    "@tanstack/react-query": "^4.36.1",
+    "@trpc/client": "^10.45.2",
+    "@trpc/next": "^10.45.2",
+    "@trpc/react-query": "^10.45.2",
+    "@trpc/server": "^10.45.2",
+    "autoprefixer": "^10.4.19",
+    "framer-motion": "^11.2.12",
+    "jwt-decode": "^4.0.0",
+    "next": "14.2.3",
+    "postcss": "^8.4.39",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-hook-form": "^7.52.0",
+    "react-toastify": "^10.0.5",
+    "tailwindcss": "^3.4.4",
+    "twsx": "^0.1.0",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.0-rc.0"
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.2.3",
+    "typescript": "^5"
   }
 }
