@@ -1,9 +1,9 @@
 'use client';
 
-import { CreateUser } from './components/CreateUser/CreateUser';
-import { CreatePost } from './components/CreatePost/CreatePost';
-import { useFetchUsersAndPosts } from './hooks/useFetchUsersAndPosts';
-import { RegisterUser } from './components/auth/RegisterUser';
+import { useFetchUsersAndPosts } from '@w-hooks/useFetchUsersAndPosts';
+import { CreateUser } from '@w-components/CreateUser/CreateUser';
+import { CreatePost } from '@w-components/CreatePost/CreatePost';
+import { RegisterUser } from '@w-components/auth/RegisterUser';
 
 export default function HomePage() {
   const { usersQuery, postsQuery } = useFetchUsersAndPosts();
@@ -59,7 +59,6 @@ export default function HomePage() {
 
       <div className="bg-white rounded-md border-2 border-solid border-slate-300 p-4 w-[400px]">
         <RegisterUser />
-
 
         <CreateUser />
 

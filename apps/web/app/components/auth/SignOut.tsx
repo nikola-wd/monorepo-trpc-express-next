@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { trpc } from '@w-utils/trpc';
 import { useAuthStore } from '@w-store/ZustandStore';
 
-const SignOut: FC = () => {
+export const SignOut: FC = () => {
   const { setUnauthenticated } = useAuthStore();
   const pathName = usePathname();
   const router = useRouter();
@@ -38,5 +38,3 @@ const SignOut: FC = () => {
     </button>
   );
 };
-
-export default SignOut;

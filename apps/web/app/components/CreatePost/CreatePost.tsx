@@ -1,22 +1,22 @@
 'use client';
 
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trpc } from '@w-utils/trpc';
 import {
   postCreateInputSchema,
   type TpostCreateInputSchema,
 } from '@repo/validation-schemas'; // adjust the path as necessary
-import { FieldWrap, Input } from '../UI';
-import { useFetchUsersAndPosts } from '../../hooks/useFetchUsersAndPosts';
+import { useFetchUsersAndPosts } from '@w-hooks/useFetchUsersAndPosts';
+import { FieldWrap, Input } from '@w-components/UI';
+import { trpc } from '@w-utils/trpc';
 
 export const CreatePost: React.FC = () => {
   const { refetchPosts } = useFetchUsersAndPosts();
 
   const createPostMutation = trpc.post.create.useMutation({
     onSuccess: () => {
-      refetchPosts();
+      void refetchPosts();
       reset();
     },
   });

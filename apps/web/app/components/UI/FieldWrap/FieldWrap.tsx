@@ -5,7 +5,7 @@ import type {
   ReactElement,
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { classNames } from '../../../util';
+import { classNames } from '@w-utils/classNames';
 
 export interface IFieldWrap
   extends PropsWithChildren,

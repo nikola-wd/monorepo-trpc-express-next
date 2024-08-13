@@ -10,9 +10,11 @@ interface TSessionUser {
   email: string;
 }
 
+// TODO: Refactor this and move to packages as in Nest project
 interface IJwtPayload {
   id: string;
   email: string;
+  maxSessionEndingTime?: number;
 }
 
 // interface IAccessToken  {
@@ -25,11 +27,10 @@ interface IAuthStore {
   isRefetching: boolean;
   accessToken: string | null;
   authSessionMessage: string | null;
-  // sessionExpiresIn: number | null;
+  sessionExpiresIn: number | null;
   setUser: (user: TSessionUser) => void;
   signIn: (accessToken: string) => TSessionUser;
   setAuthStatus: (status: TSessionStatus) => void;
-  setAuthenticated: (user: TSessionUser, token: string) => void;
   setUnauthenticated: () => void;
   setAccessToken: (token: string) => void;
   decodeToken: (token: string) => IJwtPayload;
@@ -44,20 +45,12 @@ export const useAuthStore = create<IAuthStore>()(
       isRefetching: false,
       accessToken: null,
       authSessionMessage: null,
-      // sessionExpiresIn: null,
+      sessionExpiresIn: null,
       setUser: (user) => {
         set({ user });
       },
       setAuthStatus: (status) => {
         set({ authStatus: status });
-      },
-      setAuthenticated: (user: TSessionUser, token: string) => {
-        set({
-          user,
-          accessToken: token,
-          authStatus: 'authenticated',
-          // sessionExpiresIn: maxSessionEndingTime,
-        });
       },
       setUnauthenticated: () => {
         set({
@@ -76,11 +69,18 @@ export const useAuthStore = create<IAuthStore>()(
       signIn: (accessToken: string) => {
         console.log('response from signIn:', accessToken);
 
-        const { id, email } = get().decodeToken(accessToken);
+        const { id, email, maxSessionEndingTime } =
+          get().decodeToken(accessToken);
 
         const user: TSessionUser = { id, email };
 
-        get().setAuthenticated(user, accessToken);
+        set({
+          user,
+          accessToken,
+          authStatus: 'authenticated',
+          sessionExpiresIn: maxSessionEndingTime,
+        });
+
         return user;
       },
 

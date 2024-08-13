@@ -7,8 +7,8 @@ import {
   forwardRef,
   useState,
 } from 'react';
-import { classNames } from '../../../util';
-import { EyeClosedIcon, EyeOpenIcon } from '../../../icons';
+import { EyeClosedIcon, EyeOpenIcon } from '@w-icons/index';
+import { classNames } from '@w-utils/classNames';
 
 export interface IInput
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {

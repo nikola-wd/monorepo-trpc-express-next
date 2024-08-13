@@ -11,6 +11,7 @@ import {
   generateRefreshToken,
   setRefreshTokenCookie,
 } from '../util/jwt';
+import { env_config } from '../env_config';
 
 export const authService = {
   /****************************************************************
@@ -77,10 +78,14 @@ export const authService = {
       });
     }
 
+    const sessionDuration = env_config.SESSION_MAX_DURATION;
+    const maxSessionEndingTime = new Date(Date.now() + sessionDuration);
+
     // Generate tokens
     const accessToken = generateAccessToken({
       id: user.id,
       email: user.email,
+      maxSessionEndingTime: maxSessionEndingTime.getTime(),
     });
     const refreshToken = generateRefreshToken(user.id, user.email);
 

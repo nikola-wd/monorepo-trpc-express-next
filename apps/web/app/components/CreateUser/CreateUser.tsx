@@ -6,9 +6,9 @@ import {
   userCreateInputSchema,
   type TuserCreateInputSchema,
 } from '@repo/validation-schemas';
+import { useFetchUsersAndPosts } from '@w-hooks/useFetchUsersAndPosts';
 import { trpc } from '@w-utils/trpc';
-import { FieldWrap, Input } from '../UI';
-import { useFetchUsersAndPosts } from '../../hooks/useFetchUsersAndPosts';
+import { FieldWrap, Input } from '@w-components/UI';
 
 export const CreateUser = () => {
   const {

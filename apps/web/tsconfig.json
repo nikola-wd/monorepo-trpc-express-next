@@ -24,6 +24,8 @@
       // "@/*": ["./*"],
       "@w-store/*": ["./app/store/*"],
       "@w-components/*": ["./app/components/*"],
+      "@w-icons/*": ["./app/icons/*"],
+      "@w-hooks/*": ["./app/hooks/*"],
       "@w-utils/*": ["./app/utils/*"],
       "@w-api/*": ["../api/*"]
       // "@repo/*": ["../../packages/*"]
