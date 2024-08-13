@@ -3,7 +3,7 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trpc } from '../../utils/trpc';
+import { trpc } from '@w-utils/trpc';
 import {
   postCreateInputSchema,
   type TpostCreateInputSchema,

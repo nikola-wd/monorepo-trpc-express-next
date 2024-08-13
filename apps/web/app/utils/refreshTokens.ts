@@ -1,4 +1,4 @@
-import {useAuthStore} from '@store/ZustandStore';
+import { useAuthStore } from '@w-store/ZustandStore';
 
 export async function refreshTokens() {
   const { signIn } = useAuthStore.getState();

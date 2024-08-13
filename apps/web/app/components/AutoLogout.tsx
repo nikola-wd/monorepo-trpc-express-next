@@ -2,7 +2,7 @@
 
 import { type FC, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import {useAuthStore} from "@store/ZustandStore"
+import { useAuthStore } from '@w-store/ZustandStore';
 
 const AutoLogout: FC = () => {
   const { signOut } = useAuthStore();

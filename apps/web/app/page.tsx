@@ -4,7 +4,6 @@ import { CreateUser } from './components/CreateUser/CreateUser';
 import { CreatePost } from './components/CreatePost/CreatePost';
 import { useFetchUsersAndPosts } from './hooks/useFetchUsersAndPosts';
 import { RegisterUser } from './components/auth/RegisterUser';
-import { LoginUser } from './components/auth/LoginUser';
 
 export default function HomePage() {
   const { usersQuery, postsQuery } = useFetchUsersAndPosts();
@@ -61,7 +60,6 @@ export default function HomePage() {
       <div className="bg-white rounded-md border-2 border-solid border-slate-300 p-4 w-[400px]">
         <RegisterUser />
 
-        <LoginUser />
 
         <CreateUser />
 

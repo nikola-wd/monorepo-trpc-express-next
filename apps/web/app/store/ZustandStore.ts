@@ -2,24 +2,22 @@ import type {} from '@redux-devtools/extension';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
-import { toast } from 'react-toastify';
-import {trpc} from '../utils/trpc';
 
 export type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
-type TSessionUser = {
+interface TSessionUser {
   id: string;
   email: string;
-};
+}
 
-type IJwtPayload = {
+interface IJwtPayload {
   id: string;
   email: string;
-};
+}
 
-type IAccessToken = {
-  accessToken: string;
-};
+// interface IAccessToken  {
+//   accessToken: string;
+// };
 
 interface IAuthStore {
   user: TSessionUser | null;
@@ -28,10 +26,8 @@ interface IAuthStore {
   accessToken: string | null;
   authSessionMessage: string | null;
   // sessionExpiresIn: number | null;
-  errorToastAuthError: (error: unknown) => void;
   setUser: (user: TSessionUser) => void;
   signIn: (accessToken: string) => TSessionUser;
-  signOut: () => Promise<void>;
   setAuthStatus: (status: TSessionStatus) => void;
   setAuthenticated: (user: TSessionUser, token: string) => void;
   setUnauthenticated: () => void;
@@ -76,11 +72,7 @@ export const useAuthStore = create<IAuthStore>()(
       decodeToken: (token: string) => {
         return jwtDecode<IJwtPayload>(token);
       },
-      errorToastAuthError: (error: unknown) => {
-        console.log('errorToastAuthError:', JSON.stringify(error, null, 2));
 
-        toast.error('Something went wrong. Please try again.');
-      },
       signIn: (accessToken: string) => {
         console.log('response from signIn:', accessToken);
 
@@ -92,18 +84,6 @@ export const useAuthStore = create<IAuthStore>()(
         return user;
       },
 
-      signOut: async () => {
-        try {
-          // Call your tRPC signOut mutation
-          await trpc.auth.signOut.mutateAsync();
-
-          // Update the Zustand state to unauthenticated
-          get().setUnauthenticated();
-        } catch (error: unknown) {
-          console.error('Error logging out:', error);
-          get().errorToastAuthError(error);
-        }
-      },
       // tryRefreshTokens: async () => {
       //   try {
       //     set({ isRefetching: true });
@@ -145,4 +125,3 @@ export const useAuthStore = create<IAuthStore>()(
     })
   )
 );
-

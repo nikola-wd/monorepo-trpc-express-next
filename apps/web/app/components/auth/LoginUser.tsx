@@ -1,24 +1,28 @@
 'use client';
 
-import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { type FC } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import {
   authSignInSchema,
   type TauthSignInSchema,
 } from '@repo/validation-schemas';
-import { trpc } from '../../utils/trpc';
+import { useAuthStore } from '@w-store/ZustandStore';
+import { trpc } from '@w-utils/trpc';
 import { FieldWrap, Input } from '../UI';
-import {useAuthStore} from '@store/ZustandStore';
 
-export const LoginUser: React.FC = () => {
+export const LoginUser: FC = () => {
   const { signIn } = useAuthStore();
+
+  const router = useRouter();
 
   const loginUserMutation = trpc.auth.signIn.useMutation({
     onSuccess: (data) => {
       // Handle successful login, e.g., store tokens, redirect, etc.
       console.log('Login successful', data);
       signIn(data.accessToken);
+      router.push('/');
       reset();
     },
   });

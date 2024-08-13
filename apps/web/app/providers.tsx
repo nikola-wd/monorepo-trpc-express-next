@@ -1,11 +1,12 @@
+/* eslint-disable react/hook-use-state -- TODO: Fix later */
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
-import { trpc } from './utils/trpc';
-import { refreshTokens } from './utils/refreshTokens';
-import {useAuthStore} from '@store/ZustandStore';
+import { useAuthStore } from '@w-store/ZustandStore';
+import { trpc } from '@w-utils/trpc';
+import { refreshTokens } from '@w-utils/refreshTokens';
 
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({}));
@@ -13,7 +14,7 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: 'http://localhost:3002/trpc',
+          url: 'http://localhost:3002/trpc', // TODO: Replace with .env
           async fetch(url, options) {
             const fetchOptions: RequestInit = {
               ...options,

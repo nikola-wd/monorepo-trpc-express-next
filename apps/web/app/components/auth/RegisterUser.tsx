@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trpc } from '../../utils/trpc';
 import {
   authSignUpSchema,
   type TauthSignUpSchema,
 } from '@repo/validation-schemas'; // adjust the path as necessary
+import { trpc } from '@w-utils/trpc';
 import { FieldWrap, Input } from '../UI';
 
 export const RegisterUser: React.FC = () => {

@@ -1,12 +1,12 @@
 'use client';
 
-import { trpc } from '../../utils/trpc';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   userCreateInputSchema,
   type TuserCreateInputSchema,
 } from '@repo/validation-schemas';
+import { trpc } from '@w-utils/trpc';
 import { FieldWrap, Input } from '../UI';
 import { useFetchUsersAndPosts } from '../../hooks/useFetchUsersAndPosts';
 
@@ -24,7 +24,7 @@ export const CreateUser = () => {
 
   const createUserMutation = trpc.user.create.useMutation({
     onSuccess: () => {
-      refetchUsers();
+      void refetchUsers();
       reset();
     },
   });

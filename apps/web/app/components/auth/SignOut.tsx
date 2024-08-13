@@ -2,24 +2,30 @@
 
 import { type FC } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import {useAuthStore} from '@store/ZustandStore';
+import { toast } from 'react-toastify';
+import { trpc } from '@w-utils/trpc';
+import { useAuthStore } from '@w-store/ZustandStore';
 
 const SignOut: FC = () => {
-  const { signOut } = useAuthStore();
+  const { setUnauthenticated } = useAuthStore();
   const pathName = usePathname();
+  const router = useRouter();
 
   const fromPage = pathName ? `?fromPage=${encodeURIComponent(pathName)}` : '';
 
-  const router = useRouter();
-
-  const handleSignOut = async (): Promise<void> => {
-    try {
-      await signOut();
-
+  const signOutMutation = trpc.auth.signOut.useMutation({
+    onSuccess: () => {
+      setUnauthenticated();
       router.push(`/login${fromPage}`);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Error signing out', error);
-    }
+      toast.error(JSON.stringify(error));
+    },
+  });
+
+  const handleSignOut = () => {
+    signOutMutation.mutate();
   };
 
   return (

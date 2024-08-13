@@ -21,9 +21,12 @@
     "target": "ESNext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@store/*": ["./app/store/*"],
-      "@repo/*": ["../../packages/*"]
+      // "@/*": ["./*"],
+      "@w-store/*": ["./app/store/*"],
+      "@w-components/*": ["./app/components/*"],
+      "@w-utils/*": ["./app/utils/*"],
+      "@w-api/*": ["../api/*"]
+      // "@repo/*": ["../../packages/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

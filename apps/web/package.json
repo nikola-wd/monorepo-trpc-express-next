@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",
+    "api": "workspace:*",
     "@repo/data": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
@@ -44,6 +45,7 @@
     "@types/react-dom": "^18",
     "eslint": "8.56.0",
     "eslint-config-next": "14.2.3",
+    "eslint-import-resolver-typescript": "^3.6.1",
     "typescript": "^5"
   }
 }

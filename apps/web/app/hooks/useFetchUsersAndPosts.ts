@@ -1,4 +1,4 @@
-import { trpc } from '../utils/trpc';
+import { trpc } from '@w-utils/trpc';
 
 export const useFetchUsersAndPosts = () => {
   const usersQuery = trpc.user.list.useQuery();
