@@ -1,17 +1,38 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": [
+        "apps/web/.env.development",
+        "apps/web/.env.staging"
+    ],
+    "globalEnv": [
+        "APP_ENV",
+        "NEXT_PUBLIC_STORAGE_ORIGIN",
+        "NEXT_PUBLIC_STORAGE_CDN",
+        "NEXT_PUBLIC_REMOTE_PATTERNS_STORAGE",
+        "NEXT_PUBLIC_REMOTE_PATTERNS_STORAGE_CDN",
+        "NEXT_PUBLIC_APOLLO_POLL_INTERVAL",
+        "NEXT_PUBLIC_ENDPOINT",
+        "NEXT_PUBLIC_API_ENDPOINT",
+        "NEXT_PUBLIC_GRAPHQL_ENDPOINT",
+        "SCHEMA_PATH",
+        "SENTRY_AUTH_TOKEN"
+    ],
+    "tasks": {
+        "build": {
+            "dependsOn": ["^build"],
+            "inputs": ["$TURBO_DEFAULT$", ".env*"],
+            "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+        },
+        "lint": {},
+        "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "clean": {
+            "cache": false
+        },
+        "test": {
+            "outputs": []
+        }
     }
-  }
 }

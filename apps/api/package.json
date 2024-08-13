@@ -5,16 +5,23 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
+    "prisma-generate": "prisma generate --schema=./prisma/schema.prisma",
     "dev_old": "ts-node --files src/index.ts",
     "db-show": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "20.16.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.16.1",
-    "@repo/validation-schemas": "*",
+    "@repo/data": "workspace:*",
+    "@repo/project-types": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "@repo/validation-schemas": "workspace:*",
     "@trpc/client": "^10.45.2",
     "@trpc/react-query": "^10.45.2",
     "@trpc/server": "^10.45.2",

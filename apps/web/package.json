@@ -8,11 +8,15 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": "20.16.0"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.6.0",
-    "@redux-devtools/extension": "^3.3.0",
-    "@repo/ui": "*",
-    "@repo/validation-schemas": "*",
+    "@repo/data": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "@repo/validation-schemas": "workspace:*",
     "@tanstack/react-query": "^4.36.1",
     "@trpc/client": "^10.45.2",
     "@trpc/next": "^10.45.2",
@@ -32,8 +36,9 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@redux-devtools/extension": "^3.3.0",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

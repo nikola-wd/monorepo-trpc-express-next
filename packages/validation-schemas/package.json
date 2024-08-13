@@ -2,8 +2,14 @@
   "name": "@repo/validation-schemas",
   "version": "0.0.0",
   "private": true,
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  },
+  "dependencies": {
+    "@repo/data": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/project-types": "workspace:*"
   }
 }

@@ -1,0 +1,7 @@
+{
+    "name": "@repo/project-types",
+    "version": "1.0.0",
+    "exports": {
+        ".": "./src/index.ts"
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "module": "ESNext",
+        "target": "ESNext",
+        "moduleResolution": "Bundler",
+        "preserveWatchOutput": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "strict": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "typeRoots": ["./node_modules/@types", "./src/@types"]
+    },
+    "exclude": ["node_modules"],
+    "include": ["src", "src/**/*.test.ts", "src/**/*.test.tsx"]
+}
