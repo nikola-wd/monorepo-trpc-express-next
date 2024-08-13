@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
+import {trpc} from '../utils/trpc';
 
 export type TSessionStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -30,7 +31,7 @@ interface IAuthStore {
   errorToastAuthError: (error: unknown) => void;
   setUser: (user: TSessionUser) => void;
   signIn: (accessToken: string) => TSessionUser;
-  // signOut: () => Promise<void>;
+  signOut: () => Promise<void>;
   setAuthStatus: (status: TSessionStatus) => void;
   setAuthenticated: (user: TSessionUser, token: string) => void;
   setUnauthenticated: () => void;
@@ -39,7 +40,7 @@ interface IAuthStore {
   // tryRefreshTokens: () => Promise<boolean>;
 }
 
-const useAuthStore = create<IAuthStore>()(
+export const useAuthStore = create<IAuthStore>()(
   devtools(
     (set, get): IAuthStore => ({
       user: null,
@@ -91,27 +92,18 @@ const useAuthStore = create<IAuthStore>()(
         return user;
       },
 
-      // signOut: async () => {
-      //   try {
-      //     const isRefreshed = await get().tryRefreshTokens();
+      signOut: async () => {
+        try {
+          // Call your tRPC signOut mutation
+          await trpc.auth.signOut.mutateAsync();
 
-      //     if (!isRefreshed) {
-      //       throw new Error('Failed to refresh tokens');
-      //     }
-
-      //     await authApi
-      //       .headers({
-      //         Authorization: `Bearer ${String(get().accessToken)}`,
-      //       })
-      //       .url('/logout')
-      //       .post({});
-
-      //     get().setUnauthenticated();
-      //   } catch (error: unknown) {
-      //     console.error('Error logging out:', error);
-      //     get().errorToastAuthError(error);
-      //   }
-      // },
+          // Update the Zustand state to unauthenticated
+          get().setUnauthenticated();
+        } catch (error: unknown) {
+          console.error('Error logging out:', error);
+          get().errorToastAuthError(error);
+        }
+      },
       // tryRefreshTokens: async () => {
       //   try {
       //     set({ isRefetching: true });
@@ -154,4 +146,3 @@ const useAuthStore = create<IAuthStore>()(
   )
 );
 
-export default useAuthStore;

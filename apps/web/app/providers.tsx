@@ -5,7 +5,7 @@ import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { trpc } from './utils/trpc';
 import { refreshTokens } from './utils/refreshTokens';
-import useAuthStore from './store/ZustandStore';
+import {useAuthStore} from '@store/ZustandStore';
 
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({}));

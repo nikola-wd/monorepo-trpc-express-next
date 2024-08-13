@@ -3,13 +3,13 @@
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trpc } from '../../utils/trpc';
 import {
   authSignInSchema,
   type TauthSignInSchema,
-} from '@repo/validation-schemas'; // adjust the path as necessary
+} from '@repo/validation-schemas';
+import { trpc } from '../../utils/trpc';
 import { FieldWrap, Input } from '../UI';
-import useAuthStore from '../../store/ZustandStore';
+import {useAuthStore} from '@store/ZustandStore';
 
 export const LoginUser: React.FC = () => {
   const { signIn } = useAuthStore();

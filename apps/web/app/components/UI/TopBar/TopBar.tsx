@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from '../../../hooks/useSession';
+import SignOut from 'app/components/auth/SignOut';
 
 export const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,7 +48,10 @@ export const TopBar = () => {
           ) : null}
           <div className="relative z-10" ref={dropdownRef}>
             <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              type="button"
+              onClick={() => {
+                setIsDropdownOpen(!isDropdownOpen)
+              }}
               className="flex items-center justify-center size-12 rounded-full bg-gray-200 focus:outline-none"
             >
               {/* <Image
@@ -60,7 +64,7 @@ export const TopBar = () => {
               <div className="size-10 rounded-full bg-slate-600" />
             </button>
 
-            {isDropdownOpen && (
+            {isDropdownOpen ? (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
                 <Link
                   href="/profile"
@@ -74,14 +78,9 @@ export const TopBar = () => {
                 >
                   Settings
                 </Link>
-                <Link
-                  href="/logout"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Logout
-                </Link>
+                <SignOut />
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

@@ -14,14 +14,15 @@
     "incremental": true,
     "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "resolveJsonModule": true,
     "strict": true,
     "target": "ESNext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@store/*": ["./src/app/store/*"],
+      "@/*": ["./*"],
+      "@store/*": ["./app/store/*"],
       "@repo/*": ["../../packages/*"]
     }
   },
