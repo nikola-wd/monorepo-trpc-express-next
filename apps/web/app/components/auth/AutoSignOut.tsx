@@ -1,10 +1,18 @@
-'use client';
+// 'use client';
 
-import { type FC, useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
-import { useAuthStore } from '@w-store/ZustandStore';
+// import { type FC, useEffect, useRef } from 'react';
+// import { usePathname } from 'next/navigation';
+// import { useAuthStore } from '@w-store/ZustandStore';
 
-const AutoLogout: FC = () => {
+import React from 'react';
+
+const AutoSignOut = () => {
+  return <div>AutoSignOut</div>;
+};
+
+export default AutoSignOut;
+
+/* const AutoSignOut: FC = () => {
   const { signOut } = useAuthStore();
   const pathName = usePathname();
   // prevents the double redirect to the URL with correct query params and then to /login?fromPage=%2Flogin
@@ -35,3 +43,4 @@ const AutoLogout: FC = () => {
 };
 
 export default AutoLogout;
+ */

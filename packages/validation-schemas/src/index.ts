@@ -3,7 +3,7 @@ export * from './VS_timeSchema.fragment';
 
 // Auth
 export * from './VS_login';
-export * from './VS_createUser';
+export * from './VS_signUp';
 export * from './VS_refresh';
 export * from './VS_forgotPassword';
 export * from './VS_reset_password';

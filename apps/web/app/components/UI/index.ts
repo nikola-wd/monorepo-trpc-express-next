@@ -3,3 +3,8 @@ export * from './Input/Input';
 export * from './Button';
 export * from './Dropdown';
 export * from './Flex';
+export * from './TopBackButton';
+export * from './Toggle';
+export * from './Form';
+export * from './Card';
+export * from './Txt';

@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import jwt from 'jsonwebtoken';
-import { TauthSignUpSchema } from '@repo/validation-schemas';
+import { TVS_signup_schema } from '@repo/validation-schemas';
 import { hashPassword, verifyPassword } from '../util/auth';
 import {
   REFRESH_TOKEN_SECRET,
@@ -17,32 +17,47 @@ export const authService = {
   /****************************************************************
    * MARK: Sign up a user *****************************************
    ****************************************************************/
-  registerUser: async (input: TauthSignUpSchema) => {
-    const { email, password } = input;
+  registerUser: async (input: TVS_signup_schema) => {
+    const { email, password, registerAs } = input;
 
-    // Check if the user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Email is already in use.',
-      });
-    }
-
-    // Hash the password
-    const hashedPassword = await hashPassword(password);
-
-    // Create the user
+    // TODO :Wrap in a transaction
     try {
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Email is already in use.',
+        });
+      }
+
+      const hashedPassword = await hashPassword(password);
+
+      // TODO: Create a transaction and maybe move to authDbRepository
       const user = await prisma.user.create({
         data: {
           email,
           password: hashedPassword,
+          roles: {
+            set: [registerAs],
+          },
         },
       });
+      // TODO: This should be a transaction along with create user
+      if (registerAs === 'owner') {
+        await prisma.businessGroup.create({
+          data: {
+            name: `${email}'s Business Group`,
+            owner: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        });
+      }
 
       return {
         id: user.id,
@@ -202,9 +217,13 @@ export const authService = {
         });
       }
 
+      const sessionDuration = env_config.SESSION_MAX_DURATION;
+      const maxSessionEndingTime = new Date(Date.now() + sessionDuration);
+
       const newAccessToken = generateAccessToken({
         id: decoded.sub,
         email: user.email,
+        maxSessionEndingTime: maxSessionEndingTime.getTime(),
       });
       const newRefreshToken = generateRefreshToken(decoded.sub, user.email);
 

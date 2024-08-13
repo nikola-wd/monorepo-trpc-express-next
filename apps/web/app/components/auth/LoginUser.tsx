@@ -3,7 +3,7 @@
 import { type FC } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   authSignInSchema,
   type TauthSignInSchema,
@@ -16,13 +16,22 @@ export const LoginUser: FC = () => {
   const { signIn } = useAuthStore();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromPage = searchParams.get('fromPage');
 
+  // TODO: Handle onError
   const loginUserMutation = trpc.auth.signIn.useMutation({
     onSuccess: (data) => {
       // Handle successful login, e.g., store tokens, redirect, etc.
       console.log('Login successful', data);
       signIn(data.accessToken);
-      router.push('/');
+
+      if (fromPage) {
+        router.push(fromPage);
+      } else {
+        router.push('/dashboard');
+      }
+
       reset();
     },
   });

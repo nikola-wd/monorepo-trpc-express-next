@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// TODO: Maybe move most of these fields into another Model
 model User {
   id            String    @id @default(uuid())
   // TODO: Refactor to first and last name
@@ -22,9 +23,22 @@ model User {
 
   // Relations --------------------------------
 
-  // Session
-  userSessions UserSession[]
   // TODO: Move relations to different table. This one should be lean, to be able to interate different auth methods easier
+  // Session
+  userSessions          UserSession[]
+  passwordResetRequests PasswordResetRequest[]
+
+  // TODO: Refactor so that only 1 group can exist, or totally remove groups, as they are not needed
+  // Owner
+  ownedBusinessGroups         BusinessGroup[] // Owner of business groups
+  createdEmployees            EmployeeAssignment[] @relation("CreatedEmployees")
+  // Employee
+  employeeAtBusinesses        EmployeeAssignment[]
+  // Client                      Client[]
+  reservations                Reservation[]
+  favoriteBusinesses          FavoriteBusiness[]
+  // Superadmin
+  superadminCreatedCategories Category[]           @relation("SuperadminCreatedCategories")
 }
 
 model UserSession {
@@ -39,17 +53,241 @@ model UserSession {
   @@index([userId], name: "idx_user_session_userId")
 }
 
-model TestUser {
-  id    String     @id @default(uuid())
-  name  String
-  email String     @unique
-  posts TestPost[]
+model PasswordResetRequest {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  token           String    @unique
+  requestIp       String
+  requestCount    Int       @default(0)
+  requestedAt     DateTime  @default(now())
+  finishedResetAt DateTime?
 }
 
-model TestPost {
-  id       String   @id @default(uuid())
-  title    String
-  content  String
-  author   TestUser @relation(fields: [authorId], references: [id])
-  authorId String
+model Business {
+  id               String               @id @default(uuid())
+  name             String
+  description      String?
+  country          String
+  categories       BusinessCategory[]
+  /// Optional State
+  state            String?
+  city             String
+  zipCode          Int
+  address          String
+  businessGroupId  String
+  // TODO: Add cascade on this model
+  businessGroup    BusinessGroup        @relation(fields: [businessGroupId], references: [id])
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  deletedAt        DateTime?
+  employees        EmployeeAssignment[] // Remove the 'employees' field from this model
+  reservations     Reservation[]
+  businessServices BusinessService[]
+  FavoriteBusiness FavoriteBusiness[]
 }
+
+model BusinessGroup {
+  id                String             @id @default(uuid())
+  name              String
+  ownerId           String
+  owner             User               @relation(fields: [ownerId], references: [id])
+  businesses        Business[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
+  scheduleTemplates ScheduleTemplate[] // Relation to schedule templates
+  overrideTemplates OverrideTemplate[] // Relation to override templates
+}
+
+// The EmployeeAssignment model represents the relationship between a user (employee) and a business, indicating that the user is a employee at that business. It helps you store additional information related to the user's employee role, such as when the user became a employee at that business.
+model EmployeeAssignment {
+  id          String    @id @default(uuid())
+  userId      String // Employee's User ID
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessId  String
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  createdBy   User      @relation("CreatedEmployees", fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String
+  deletedAt   DateTime?
+
+  @@unique([businessId, userId])
+}
+
+// TODO: Check if this model is good
+model Reservation {
+  id         String          @id @default(uuid())
+  userId     String
+  businessId String
+  serviceId  String
+  startTime  DateTime
+  endTime    DateTime
+  user       User            @relation(fields: [userId], references: [id])
+  business   Business        @relation(fields: [businessId], references: [id])
+  service    BusinessService @relation(fields: [serviceId], references: [id])
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  deletedAt  DateTime?
+  clientId   String?
+
+  @@unique([userId, businessId, serviceId, startTime])
+}
+
+model FavoriteBusiness {
+  id         String    @id @default(uuid())
+  userId     String
+  businessId String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  business   Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  clientId   String?
+
+  @@unique([userId, businessId])
+}
+
+model Category {
+  id         String             @id @default(uuid())
+  name       String
+  businesses BusinessCategory[]
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  createdBy  String
+  creator    User               @relation("SuperadminCreatedCategories", fields: [createdBy], references: [id])
+
+  @@unique([name, createdBy])
+}
+
+model BusinessCategory {
+  businessId String
+  categoryId String
+  business   Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@id([businessId, categoryId])
+}
+
+model Service {
+  id               String            @id @default(uuid())
+  name             String
+  businessServices BusinessService[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+}
+
+model BusinessService {
+  id                String        @id @default(uuid())
+  businessId        String
+  serviceId         String
+  price             Float
+  customDescription String?
+  business          Business      @relation(fields: [businessId], references: [id])
+  service           Service       @relation(fields: [serviceId], references: [id])
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  deletedAt         DateTime?
+  Reservation       Reservation[]
+
+  @@unique([businessId, serviceId])
+}
+
+// WORKING DAYS HOURS AND OVERRIDES TEMPLATES
+// TODO: Remove onDelete cascasdes as we are working with soft deletes
+
+model ScheduleTemplate {
+  id              String        @id @default(uuid())
+  name            String
+  businessGroupId String
+  businessGroup   BusinessGroup @relation(fields: [businessGroupId], references: [id])
+  daySchedules    DaySchedule[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model DaySchedule {
+  id                 String           @id @default(uuid())
+  dayOfWeek          Int // 0 for global default, 1 for Monday, ... 7 for Sunday
+  isClosed           Boolean          @default(true)
+  scheduleTemplateId String
+  scheduleTemplate   ScheduleTemplate @relation(fields: [scheduleTemplateId], references: [id], onDelete: Cascade)
+  timeBlocks         TimeBlock[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([scheduleTemplateId, dayOfWeek])
+}
+
+model TimeBlock {
+  id            String       @id @default(uuid())
+  startTime     Decimal      @db.Decimal(4, 2) // Change from Float to Decimal with 2 decimal places
+  endTime       Decimal      @db.Decimal(4, 2) // Change from Float to Decimal with 2 decimal places
+  dayScheduleId String?
+  daySchedule   DaySchedule? @relation(fields: [dayScheduleId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  overrideId    String?
+  override      Override?    @relation(fields: [overrideId], references: [id])
+}
+
+model OverrideTemplate {
+  id              String        @id @default(uuid())
+  name            String
+  businessGroupId String
+  businessGroup   BusinessGroup @relation(fields: [businessGroupId], references: [id])
+  override        Override?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @default(now())
+}
+
+model Override {
+  id                 String           @id @default(uuid())
+  overrideType       OverrideType
+  durationType       DurationType
+  dateType           DateType         @default(SINGLE)
+  startDay           Int
+  startMonth         Int
+  startYear          Int?
+  endDay             Int? // New field
+  endMonth           Int? // New field
+  endYear            Int? // New field
+  isAllDay           Boolean          @default(false)
+  explanation        String?
+  overrideTemplate   OverrideTemplate @relation(fields: [overrideTemplateId], references: [id], onDelete: Cascade)
+  overrideTemplateId String           @unique
+  timeBlocks         TimeBlock[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+}
+
+enum OverrideType {
+  WORKING
+  NOT_WORKING
+}
+
+enum DurationType {
+  NON_REPEATING
+  REPEATS_EACH_YEAR
+}
+
+enum DateType {
+  SINGLE
+  RANGE
+}
+
+// Modularize schema prisma: https://stackoverflow.com/questions/71163623/how-to-split-prisma-model-into-separate-file
+// XXX: Better and updated lib: https://github.com/ajmnz/prisma-import
+// XXX: Maybe also a good alternative: https://medium.com/@joydip007x/how-to-use-multiple-schema-in-prisma-40cc6b6f8d9c
+// Prisma issue: https://github.com/prisma/prisma/issues/2377
+
+// XXX: How would introspection work with multiple schemas?
+
+// Alternative: https://github.com/romeerez/orchid-orm
+
+// https://www.prisma.io/docs/orm/prisma-schema/data-model/multi-schema

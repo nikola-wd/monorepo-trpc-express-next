@@ -1,58 +1,113 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import {
-  authSignUpSchema,
-  type TauthSignUpSchema,
+  VS_signup_schema,
+  type TVS_signup_schema,
 } from '@repo/validation-schemas'; // adjust the path as necessary
 import { trpc } from '@w-utils/trpc';
-import { FieldWrap, Input } from '../UI';
+import {
+  FieldWrap,
+  Input,
+  Toggle,
+  Form,
+  Card,
+  Button,
+  Txt,
+} from '@w-components/UI';
+import { classNames } from '@w-utils/classNames';
 
 export const RegisterUser: React.FC = () => {
+  const [toggleChecked, setToggleChecked] = useState(false);
+
+  const router = useRouter();
+
   const registerUserMutation = trpc.auth.signUp.useMutation({
     onSuccess: () => {
       reset();
+      router.push('/login');
     },
   });
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
-  } = useForm<TauthSignUpSchema>({
-    resolver: zodResolver(authSignUpSchema),
+  } = useForm<TVS_signup_schema>({
+    defaultValues: {
+      email: '',
+      password: '',
+      registerAs: 'owner',
+    },
+    resolver: zodResolver(VS_signup_schema),
+    mode: 'onChange',
   });
 
-  const onSubmit: SubmitHandler<TauthSignUpSchema> = (data) => {
+  const onSubmit: SubmitHandler<TVS_signup_schema> = (data) => {
     registerUserMutation.mutate(data);
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-2 text-slate-700">
-        Register New User
-      </h2>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mb-8">
-        <div className="mb-4">
-          <FieldWrap label="Email" className="mb-12" error={errors.email}>
-            <Input {...register('email')} type="email" />
-          </FieldWrap>
-        </div>
-        <div className="mb-4">
-          <FieldWrap label="Password" className="mb-12" error={errors.password}>
-            <Input {...register('password')} type="password" />
-          </FieldWrap>
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition"
+    <>
+      <Form onSubmit={handleSubmit(onSubmit)} className="mt-[80px] space-y-4">
+        <Card
+          asTag="div"
+          className="w-full max-w-md mx-auto py-6 flex-col gap-2 items-stretch"
         >
-          Register User
-        </button>
-      </form>
-    </div>
+          <FieldWrap label="Email" className="mb-6" error={errors.email}>
+            <Input
+              {...register('email')}
+              isError={Boolean(errors.email)}
+              type="email"
+            />
+          </FieldWrap>
+          <FieldWrap label="Password" className="mb-6" error={errors.password}>
+            <Input
+              {...register('password')}
+              type="password"
+              isError={Boolean(errors.password)}
+              revealable
+            />
+          </FieldWrap>
+
+          <Txt className="text-md text-center">Register as:</Txt>
+
+          {/* TODO: Refactor this toggle to accept useForm validation */}
+          <Toggle
+            checked={toggleChecked}
+            setChecked={setToggleChecked}
+            labelLeft="Owner"
+            labelRight="Client"
+          />
+
+          <Button
+            theme="primary"
+            size="medium"
+            type="submit"
+            disabled={isSubmitting || Object.keys(errors).length > 0}
+            className={classNames(
+              isSubmitting && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            {isSubmitting ? 'Loading...' : 'Sign Up'}
+          </Button>
+        </Card>
+      </Form>
+
+      <Txt className="text-center mt-4">
+        <Link href="/login" className="text-blue-500 hover:text-blue-700">
+          Sign In
+        </Link>{' '}
+        <span className="text-slate-600">instead: or go</span>{' '}
+        <Link href="/" className="text-blue-500 hover:text-blue-700">
+          Home
+        </Link>
+      </Txt>
+    </>
   );
 };
